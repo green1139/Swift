@@ -5,68 +5,53 @@
 //  Created by Carlos Butron on 01/12/14.
 //  Copyright (c) 2015 Carlos Butron. All rights reserved.
 //
-//  This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
-//  License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
-//  version.
-//  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-//  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-//  You should have received a copy of the GNU General Public License along with this program. If not, see
-//  http:/www.gnu.org/licenses/.
-//
 
 import UIKit
 
 class ViewController: UIViewController {
     
-    
     @IBOutlet weak var image2: UIImageView!
-    
     
     override func viewDidLoad() {
         
-        
-        var swipeGestureRight = UISwipeGestureRecognizer(target: self, action: "respondToSwipeGesture:")
-        swipeGestureRight.direction = UISwipeGestureRecognizerDirection.Right
+        let swipeGestureRight = UISwipeGestureRecognizer(target: self, action: #selector(ViewController.respondToSwipeGesture(_:)))
+        swipeGestureRight.direction = UISwipeGestureRecognizerDirection.right
         image2.addGestureRecognizer(swipeGestureRight)
         
-        var swipeGestureDown = UISwipeGestureRecognizer(target: self, action: "respondToSwipeGesture:")
-        swipeGestureDown.direction = UISwipeGestureRecognizerDirection.Down
+        let swipeGestureDown = UISwipeGestureRecognizer(target: self, action: #selector(ViewController.respondToSwipeGesture(_:)))
+        swipeGestureDown.direction = UISwipeGestureRecognizerDirection.down
         image2.addGestureRecognizer(swipeGestureDown)
         
-        var swipeGestureLeft = UISwipeGestureRecognizer(target: self, action: "respondToSwipeGesture:")
-        swipeGestureLeft.direction = UISwipeGestureRecognizerDirection.Left
+        let swipeGestureLeft = UISwipeGestureRecognizer(target: self, action: #selector(ViewController.respondToSwipeGesture(_:)))
+        swipeGestureLeft.direction = UISwipeGestureRecognizerDirection.left
         image2.addGestureRecognizer(swipeGestureLeft)
         
-        var swipeGestureUp = UISwipeGestureRecognizer(target: self, action: "respondToSwipeGesture:")
-        swipeGestureUp.direction = UISwipeGestureRecognizerDirection.Up
+        let swipeGestureUp = UISwipeGestureRecognizer(target: self, action: #selector(ViewController.respondToSwipeGesture(_:)))
+        swipeGestureUp.direction = UISwipeGestureRecognizerDirection.up
         image2.addGestureRecognizer(swipeGestureUp)
-        
         
         super.viewDidLoad()
         
         image2.image = UIImage(named: "apple.png")
-        // Do any additional setup after loading the view, typically from a nib.
     }
     
-    
-    
-    @IBAction func respondToSwipeGesture(send: UIGestureRecognizer) {
+    @IBAction func respondToSwipeGesture(_ send: UIGestureRecognizer) {
         
         if let swipeGesture = send as? UISwipeGestureRecognizer {
             
             switch swipeGesture.direction {
-            case UISwipeGestureRecognizerDirection.Right:
+            case UISwipeGestureRecognizerDirection.right:
                 changeImage()
-                println("Swiped right")
-            case UISwipeGestureRecognizerDirection.Down:
+                print("Swiped right")
+            case UISwipeGestureRecognizerDirection.down:
                 changeImage()
-                println("Swiped down")
-            case UISwipeGestureRecognizerDirection.Left:
+                print("Swiped down")
+            case UISwipeGestureRecognizerDirection.left:
                 changeImage()
-                println("Swiped left")
-            case UISwipeGestureRecognizerDirection.Up:
+                print("Swiped left")
+            case UISwipeGestureRecognizerDirection.up:
                 changeImage()
-                println("Swiped up")
+                print("Swiped up")
             default:
                 break
             }
@@ -81,14 +66,8 @@ class ViewController: UIViewController {
         }
     }
     
-    
-    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
-    
 }
-
-

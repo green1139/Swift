@@ -5,59 +5,53 @@
 //  Created by Carlos Butron on 07/12/14.
 //  Copyright (c) 2014 Carlos Butron.
 //
-//  This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
-//  License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
-//  version.
-//  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-//  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-//  You should have received a copy of the GNU General Public License along with this program. If not, see
-//  http:/www.gnu.org/licenses/.
-//
 
 import UIKit
 
 class URLViewController: UIViewController, UIWebViewDelegate {
     
-    
     @IBOutlet weak var myURL: UITextField!
     @IBOutlet weak var webView: UIWebView!
+    @IBOutlet weak var webView2: UIWebView!
     
-
-    @IBAction func send(sender: UIButton) {
-        var url:NSURL = NSURL(string: myURL.text)!
+    @IBAction func send(_ sender: UIButton) {
+        let url:URL = URL(string: myURL.text!)!
         let controller = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-        self.presentViewController(controller, animated: true, completion: nil)
+        self.present(controller, animated: true, completion: nil)
     }
     
-    @IBAction func load(sender: UIButton) {
-        var request = NSURLRequest(URL: NSURL(string: myURL.text)!)
-        self.webView.loadRequest(request)
+    @IBAction func load(_ sender: UIButton) {
+        let request = URLRequest(url: URL(string: myURL.text!)!)
+        self.webView2.loadRequest(request)
     }
-    
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        myURL.text = "http://carlosbutron.es/"
-        webView.delegate = self
-        var request = NSURLRequest(URL: NSURL(string: myURL.text)!)
-        self.webView.loadRequest(request)        // Do any additional setup after loading the view.
+        
+        webView2.delegate = self
+        
+        //1. Load web site into my web view
+        
+        let myURL = URL(string: "http://www.swiftdeveloperblog.com");
+        let myURLRequest:URLRequest = URLRequest(url: myURL!);
+        webView2.loadRequest(myURLRequest);
+        
+        
+        
+        
+//        // Do any additional setup after loading the view, typically from a nib.
+//        let url = NSURL (string: "http://www.google.com");
+//        let request = NSURLRequest(URL: url!);
+//        webView2.loadRequest(request);
+        
+//        myURL.text = "http://carlosbutron.es/"
+//        webView2.delegate = self
+//        let request = NSURLRequest(URL: NSURL(string: myURL.text!)!)
+//        self.webView2.loadRequest(request)
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

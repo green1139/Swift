@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6250" systemVersion="14D131" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="wAO-Zg-b5a">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="wAO-Zg-b5a">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6244"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
     </dependencies>
     <scenes>
         <!--Item 2-->
@@ -40,7 +41,7 @@
                                 </connections>
                             </button>
                             <webView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4tZ-Vh-aC7">
-                                <rect key="frame" x="16" y="131" width="288" height="374"/>
+                                <rect key="frame" x="0.0" y="106" width="288" height="374"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </webView>
                         </subviews>
@@ -48,8 +49,9 @@
                     </view>
                     <tabBarItem key="tabBarItem" title="Item 2" id="AG9-L9-gsA"/>
                     <connections>
-                        <outlet property="miURL" destination="HWt-aJ-N8M" id="DMe-AB-EQW"/>
+                        <outlet property="myURL" destination="HWt-aJ-N8M" id="Ooi-yu-G4e"/>
                         <outlet property="webView" destination="4tZ-Vh-aC7" id="9n5-35-tgu"/>
+                        <outlet property="webView2" destination="4tZ-Vh-aC7" id="La6-9i-afP"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5CY-JH-t6C" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -133,9 +135,4 @@
     <resources>
         <image name="image.png" width="500" height="550"/>
     </resources>
-    <simulatedMetricsContainer key="defaultSimulatedMetrics">
-        <simulatedStatusBarMetrics key="statusBar"/>
-        <simulatedOrientationMetrics key="orientation"/>
-        <simulatedScreenMetrics key="destination" type="retina4"/>
-    </simulatedMetricsContainer>
 </document>

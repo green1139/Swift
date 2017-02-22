@@ -5,14 +5,6 @@
 //  Created by Carlos Butron on 07/12/14.
 //  Copyright (c) 2015 Carlos Butron. All rights reserved.
 //
-//  This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
-//  License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
-//  version.
-//  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-//  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-//  You should have received a copy of the GNU General Public License along with this program. If not, see
-//  http:/www.gnu.org/licenses/.
-//
 
 import UIKit
 import AVFoundation
@@ -31,21 +23,31 @@ class ViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        
-        setupCaptureSession() 
-        previewLayer.frame = previewView.bounds
-        previewView.layer.addSublayer(previewLayer)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "startRunning:", name:UIApplicationWillEnterForegroundNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "stopRunning:", name:UIApplicationDidEnterBackgroundNotification, object: nil)
+
+        setupCaptureSession()
+        if captureSession == nil {
+            let alert = UIAlertController(title: "Camera required", message: "This device has no camera. Is this an iOS Simulator?", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "Got it", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            self.present(alert, animated: false, completion: nil)
+        }
+        else {
+            previewLayer.frame = previewView.bounds
+            previewView.layer.addSublayer(previewLayer)
+            NotificationCenter.default.addObserver(self, selector: #selector(ViewController.startRunning), name:NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(ViewController.stopRunning), name:NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+        }
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     func startRunning(){
+        if captureSession == nil {
+            return
+        }
+        
         captureSession.startRunning()
         metadataOutput.metadataObjectTypes =
             metadataOutput.availableMetadataObjectTypes
@@ -56,11 +58,11 @@ class ViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
         running = false
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.startRunning()
     }
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.stopRunning()
     }
@@ -70,40 +72,39 @@ class ViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
         if(captureSession != nil){
             return
         }
-        videoDevice = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo)
+        videoDevice = AVCaptureDevice.defaultDevice(withMediaType: AVMediaTypeVideo)
         
         if(videoDevice == nil){
-            println("No camera on this device")
+            print("No camera on this device")
+            return
         }
+        
         captureSession = AVCaptureSession()
-        videoInput = AVCaptureDeviceInput.deviceInputWithDevice(videoDevice, error: nil) as AVCaptureDeviceInput
+        videoInput = (try! AVCaptureDeviceInput(device: videoDevice) as AVCaptureDeviceInput)
         
         if(captureSession.canAddInput(videoInput)){
             captureSession.addInput(videoInput)
         }
+        
         previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
         metadataOutput = AVCaptureMetadataOutput()
-        var metadataQueue = dispatch_queue_create("com.example.QRCode.metadata", nil)
+        let metadataQueue = DispatchQueue(label: "com.example.QRCode.metadata", attributes: [])
         metadataOutput.setMetadataObjectsDelegate(self, queue: metadataQueue)
         
         if(captureSession.canAddOutput(metadataOutput)){
             captureSession.addOutput(metadataOutput)
-        } }
-    
-    func captureOutput(captureOutput: AVCaptureOutput!,
-        didOutputMetadataObjects metadataObjects: [AnyObject]!, fromConnection
-        connection: AVCaptureConnection!) {
-            var elemento = metadataObjects.first as?
-            AVMetadataMachineReadableCodeObject
-            if(elemento != nil){
-                println(elemento!.stringValue)
-                sendURL = elemento!.stringValue
-
-            }
+        } 
     }
     
-
+    func captureOutput(_ captureOutput: AVCaptureOutput!, didOutputMetadataObjects metadataObjects: [Any]!, from connection: AVCaptureConnection!) {
+            let elemento = metadataObjects.first as?
+            AVMetadataMachineReadableCodeObject
+            if(elemento != nil){
+                print(elemento!.stringValue)
+                sendURL = elemento!.stringValue
+            }
+    }
     
 }
 

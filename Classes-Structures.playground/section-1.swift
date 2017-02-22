@@ -1,5 +1,4 @@
-// Playground - noun: a place where people can play
-
+// Playground - noun: a place where people can play swift
 
 class Vehicle {
     var wheelNumber: Int
@@ -16,10 +15,7 @@ class Vehicle {
     
 }
 
-
-
-class Bycicle: Vehicle {
-    
+class Bicycle: Vehicle {
     override init() {
         super.init()
         wheelNumber = 2
@@ -28,9 +24,5 @@ class Bycicle: Vehicle {
     
 }
 
-let abycicle = Bycicle()
-abycicle.description()
-
-
-
-
+let abicycle = Bicycle()
+abicycle.description()

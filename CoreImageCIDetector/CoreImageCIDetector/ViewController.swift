@@ -5,101 +5,86 @@
 //  Created by Carlos Butron on 07/12/14.
 //  Copyright (c) 2015 Carlos Butron. All rights reserved.
 //
-//  This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
-//  License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
-//  version.
-//  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-//  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-//  You should have received a copy of the GNU General Public License along with this program. If not, see
-//  http:/www.gnu.org/licenses/.
-//
 
 import UIKit
 
 class ViewController: UIViewController {
     
     var filePath: NSString = ""
-    var fileNameAndPath = NSURL()
+    var fileNameAndPath = URL()
     var image = CIImage()
     
     override func viewDidLoad() {
-        filePath = NSBundle.mainBundle().pathForResource("emotions", ofType: "jpg")!
-        fileNameAndPath = NSURL.fileURLWithPath(filePath)!
-        image = CIImage(contentsOfURL:fileNameAndPath)
-        var context = CIContext(options: nil)
-        var options = NSDictionary(object: CIDetectorAccuracyHigh, forKey: CIDetectorAccuracy)
-        var detector = CIDetector(ofType: CIDetectorTypeFace, context: context, options: options)
-        var features: NSArray = detector.featuresInImage(image, options: [CIDetectorSmile:true,CIDetectorEyeBlink:true])
-        var imageView = UIImageView(image: UIImage(named: "emotions.jpg"))
+        filePath = Bundle.main.path(forResource: "emotions", ofType: "jpg")!
+        fileNameAndPath = URL(fileURLWithPath: filePath as String)
+        image = CIImage(contentsOf:fileNameAndPath)!
+        let context = CIContext(options: nil)
+        let options = NSDictionary(object: CIDetectorAccuracyHigh, forKey: CIDetectorAccuracy as NSCopying)
+        let detector = CIDetector(ofType: CIDetectorTypeFace, context: context, options: options as? [String : AnyObject] )
+        let features: NSArray = detector!.features(in: image, options: [CIDetectorSmile:true,CIDetectorEyeBlink:true])
+        let imageView = UIImageView(image: UIImage(named: "emotions.jpg"))
         self.view.addSubview(imageView)
         
         //auxiliar view to invert.
-        var vistAux = UIView(frame: imageView.frame)
+        let vistAux = UIView(frame: imageView.frame)
         for faceFeature in features {
             
             //Detection
-            var smile = faceFeature.hasSmile
-            var rightEyeBlinking = faceFeature.rightEyeClosed
-            var leftEyeBlinking = faceFeature.leftEyeClosed
+            let smile = (faceFeature as AnyObject).hasSmile
+            let rightEyeBlinking = (faceFeature as AnyObject).rightEyeClosed
+            let leftEyeBlinking = (faceFeature as AnyObject).leftEyeClosed
             
-            //Location face
-            let faceRect = faceFeature.bounds
-            var faceView = UIView(frame: faceRect)
+            //Face location
+            let faceRect = (faceFeature as AnyObject).bounds
+            let faceView = UIView(frame: faceRect)
             faceView.layer.borderWidth = 2
-            faceView.layer.borderColor = UIColor.redColor().CGColor
-            var faceWidth:CGFloat = faceRect.size.width
-            var faceHeight:CGFloat = faceRect.size.height
+            faceView.layer.borderColor = UIColor.red.cgColor
+            let faceWidth:CGFloat = faceRect.size.width
+            let faceHeight:CGFloat = faceRect.size.height
             vistAux.addSubview(faceView)
             
-            //Location smile
+            //Smile location
             if (smile==true) {
-                var smileView = UIView(frame: CGRectMake(faceFeature.mouthPosition.x-faceWidth*0.18, faceFeature.mouthPosition.y-faceHeight*0.1, faceWidth*0.4, faceHeight*0.2))
+                let smileView = UIView(frame: CGRect(x: faceFeature.mouthPosition.x-faceWidth*0.18, y: faceFeature.mouthPosition.y-faceHeight*0.1, width: faceWidth*0.4, height: faceHeight*0.2))
                 smileView.layer.cornerRadius = faceWidth*0.1
                 smileView.layer.borderWidth = 2
-                smileView.layer.borderColor = UIColor.greenColor().CGColor
-                smileView.layer.backgroundColor = UIColor.greenColor().CGColor
+                smileView.layer.borderColor = UIColor.green.cgColor
+                smileView.layer.backgroundColor = UIColor.green.cgColor
                 smileView.layer.opacity = 0.5
                 vistAux.addSubview(smileView)
             }
             
-            //Location right eye
-            
-            var rightEyeView = UIView(frame: CGRectMake(faceFeature.rightEyePosition.x-faceWidth*0.2, faceFeature.rightEyePosition.y-faceWidth*0.2, faceWidth*0.4, faceWidth*0.4))
+            //Right eye location
+            let rightEyeView = UIView(frame: CGRect(x: faceFeature.rightEyePosition.x-faceWidth*0.2, y: faceFeature.rightEyePosition.y-faceWidth*0.2, width: faceWidth*0.4, height: faceWidth*0.4))
             rightEyeView.layer.cornerRadius = faceWidth*0.2
             rightEyeView.layer.borderWidth = 2
-            rightEyeView.layer.borderColor = UIColor.redColor().CGColor
+            rightEyeView.layer.borderColor = UIColor.red.cgColor
             if (rightEyeBlinking==true){
-                rightEyeView.layer.backgroundColor = UIColor.yellowColor().CGColor
+                rightEyeView.layer.backgroundColor = UIColor.yellow.cgColor
             }else{
-                rightEyeView.layer.backgroundColor = UIColor.redColor().CGColor
+                rightEyeView.layer.backgroundColor = UIColor.red.cgColor
             }
             rightEyeView.layer.opacity = 0.5
             vistAux.addSubview(rightEyeView)
             
-            
-            //Location left eye
-            
-            var leftEyeView = UIView(frame: CGRectMake(faceFeature.leftEyePosition.x-faceWidth*0.2, faceFeature.leftEyePosition.y-faceWidth*0.2, faceWidth*0.4, faceWidth*0.4))
+            //Left eye location
+            let leftEyeView = UIView(frame: CGRect(x: faceFeature.leftEyePosition.x-faceWidth*0.2, y: faceFeature.leftEyePosition.y-faceWidth*0.2, width: faceWidth*0.4, height: faceWidth*0.4))
             leftEyeView.layer.cornerRadius = faceWidth*0.2
             leftEyeView.layer.borderWidth = 2
-            leftEyeView.layer.borderColor = UIColor.blueColor().CGColor
+            leftEyeView.layer.borderColor = UIColor.blue.cgColor
             if (leftEyeBlinking==true){
-                leftEyeView.layer.backgroundColor = UIColor.yellowColor().CGColor
+                leftEyeView.layer.backgroundColor = UIColor.yellow.cgColor
             }else{
-                leftEyeView.layer.backgroundColor = UIColor.blueColor().CGColor
+                leftEyeView.layer.backgroundColor = UIColor.blue.cgColor
             }
             leftEyeView.layer.opacity = 0.5
             vistAux.addSubview(leftEyeView)
-            
-            
-            
-            
         }
         
         self.view.addSubview(vistAux)
         
         //Invert coords
-        vistAux.transform = CGAffineTransformMakeScale(1, -1)
+        vistAux.transform = CGAffineTransform(scaleX: 1, y: -1)
         
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -107,9 +92,6 @@ class ViewController: UIViewController {
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
-    
 }
-

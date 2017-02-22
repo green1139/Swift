@@ -5,62 +5,46 @@
 //  Created by Carlos Butron on 02/12/14.
 //  Copyright (c) 2014 Carlos Butron.
 //
-//  This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
-//  License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
-//  version.
-//  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-//  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-//  You should have received a copy of the GNU General Public License along with this program. If not, see
-//  http:/www.gnu.org/licenses/.
-//
 
 import UIKit
 
-class ViewController: UIViewController, NSURLSessionDownloadDelegate {
+class ViewController: UIViewController, URLSessionDownloadDelegate {
     
-    var session = NSURLSession()
+    var session = Foundation.URLSession()
     
     @IBOutlet weak var imagen: UIImageView!
     @IBOutlet weak var progreso: UIProgressView!
     
-    @IBAction func cargar(sender: UIButton) {
-        
-        var imageUrl: NSString = "http://carlosbutron.es/wp-content/uploads/2014/11/logo-carlosbutrondev.jpg"
-        var getImageTask: NSURLSessionDownloadTask =
-        session.downloadTaskWithURL(NSURL(string: imageUrl)!)
+    @IBAction func cargar(_ sender: UIButton) {
+        let imageUrl: NSString = "http://c.hiphotos.baidu.com/image/pic/item/8cb1cb13495409235fa14adf9158d109b2de4942.jpg"
+        let getImageTask: URLSessionDownloadTask =
+        session.downloadTask(with: URL(string: imageUrl as String)!)
         getImageTask.resume()
-        
     }
-    
-    
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        var sessionConfig =
-        NSURLSessionConfiguration.defaultSessionConfiguration()
-        session = NSURLSession(configuration: sessionConfig, delegate: self, delegateQueue: nil)
+        let sessionConfig =
+        URLSessionConfiguration.default
+        session = Foundation.URLSession(configuration: sessionConfig, delegate: self, delegateQueue: nil)
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
-    func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL){
-        println("Download finished")
-        var downloadedImage = UIImage(data: NSData(contentsOfURL: location)!)
-        dispatch_async(dispatch_get_main_queue(), {() in
+    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL){
+        print("Download finished")
+        let downloadedImage = UIImage(data: try! Data(contentsOf: location))
+        DispatchQueue.main.async(execute: {() in
             self.imagen.image = downloadedImage
         })
     }
     
-    func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didWriteData bytesWritten: Int64,totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64){
-        dispatch_async(dispatch_get_main_queue(), {() in
-            var variable = Float(totalBytesWritten)/Float(totalBytesExpectedToWrite)
+    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64,totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64){
+        DispatchQueue.main.async(execute: {() in
+            let variable = Float(totalBytesWritten)/Float(totalBytesExpectedToWrite)
             self.progreso.progress = variable
         }) }
-    
-    
+        
 }
-
-

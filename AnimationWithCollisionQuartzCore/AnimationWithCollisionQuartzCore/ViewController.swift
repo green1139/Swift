@@ -5,17 +5,8 @@
 //  Created by Carlos Butron on 02/12/14.
 //  Copyright (c) 2015 Carlos Butron. All rights reserved.
 //
-//  This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
-//  License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
-//  version.
-//  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-//  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-//  You should have received a copy of the GNU General Public License along with this program. If not, see
-//  http:/www.gnu.org/licenses/.
-//
+
 import UIKit
-
-
 
 class ViewController: UIViewController, UICollisionBehaviorDelegate {
     
@@ -25,11 +16,10 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
     
     var collision: UICollisionBehavior!
     
-    
-    @IBAction func gravity(sender: UIButton) {
+    @IBAction func gravity(_ sender: UIButton) {
         animator.removeAllBehaviors()
-        //gravity, push and attachment are the selected IBOutlets
-        var gravity = UIGravityBehavior(items: [self.gravity,self.push,self.attachment])
+        //gravity, push and attachment
+        let gravity = UIGravityBehavior(items: [self.gravity,self.push,self.attachment])
         animator.addBehavior(gravity)
         
         collision = UICollisionBehavior(items: [self.push, self.gravity, self.attachment])
@@ -37,9 +27,9 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
         animator.addBehavior(collision)
     }
     
-    @IBAction func push(sender: AnyObject) {
+    @IBAction func push(_ sender: AnyObject) {
         animator.removeAllBehaviors()
-        var push = UIPushBehavior(items: [self.gravity,self.push,self.attachment], mode:UIPushBehaviorMode.Instantaneous)
+        let push = UIPushBehavior(items: [self.gravity,self.push,self.attachment], mode:UIPushBehaviorMode.instantaneous)
         push.magnitude = 2
         
         animator.addBehavior(push)
@@ -50,40 +40,37 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
     }
     
     var attachmentBehavior: UIAttachmentBehavior? = nil
-    @IBAction func attachment(sender: AnyObject) {
+    
+    @IBAction func attachment(_ sender: AnyObject) {
         animator.removeAllBehaviors()
-        var anchorPoint = CGPointMake(self.attachment.center.x, self.attachment.center.y)
+        let anchorPoint = CGPoint(x: self.attachment.center.x, y: self.attachment.center.y)
         attachmentBehavior = UIAttachmentBehavior(item: self.attachment, attachedToAnchor: anchorPoint)
         attachmentBehavior!.frequency = 0.5
         attachmentBehavior!.damping = 2
         attachmentBehavior!.length = 20
-        animator.addBehavior(attachmentBehavior)
+        animator.addBehavior(attachmentBehavior!)
         collision = UICollisionBehavior(items: [self.push, self.gravity, self.attachment])
         collision.translatesReferenceBoundsIntoBoundary = true
         animator.addBehavior(collision)
-        
     }
     
-    @IBAction func handleAttachment(sender: UIPanGestureRecognizer) {
+    @IBAction func handleAttachment(_ sender: UIPanGestureRecognizer) {
         if((attachmentBehavior) != nil){
-            attachmentBehavior!.anchorPoint = sender.locationInView(self.view)
+            attachmentBehavior!.anchorPoint = sender.location(in: self.view)
         }
     }
-    
     
     var animator = UIDynamicAnimator()
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
         animator = UIDynamicAnimator(referenceView: self.view)
     }
     
-    override func viewDidAppear(animated: Bool) {
-        var max: CGRect = UIScreen.mainScreen().bounds
-        var snap1 = UISnapBehavior(item: self.gravity, snapToPoint: CGPointMake(max.size.width/2, max.size.height/2 - 50))
-        var snap2 = UISnapBehavior(item: self.push, snapToPoint: CGPointMake(max.size.width/2, max.size.height/2 ))
-        var snap3 = UISnapBehavior(item: self.attachment, snapToPoint: CGPointMake(max.size.width/2, max.size.height/2 + 50))
+    override func viewDidAppear(_ animated: Bool) {
+        let max: CGRect = UIScreen.main.bounds
+        let snap1 = UISnapBehavior(item: self.gravity, snapTo: CGPoint(x: max.size.width/2, y: max.size.height/2 - 50))
+        let snap2 = UISnapBehavior(item: self.push, snapTo: CGPoint(x: max.size.width/2, y: max.size.height/2 ))
+        let snap3 = UISnapBehavior(item: self.attachment, snapTo: CGPoint(x: max.size.width/2, y: max.size.height/2 + 50))
         snap1.damping = 1
         snap2.damping = 2
         snap3.damping = 4
@@ -94,12 +81,6 @@ class ViewController: UIViewController, UICollisionBehaviorDelegate {
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
-    
-    
 }
-
-
-

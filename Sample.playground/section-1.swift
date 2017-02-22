@@ -2,88 +2,71 @@
 
 import UIKit
 
-var array = ["one","two","three","four"]for element in array {    println(element)
+var array = ["one","two","three","four"]
+for element in array {
+    print(element)
 }
-
 
 var array2 = [1,2,3,4,5,6,7,8,9,10];
 
-
-
-func example1(integers: NSArray) {
+func example1(integers: [Int]) {
     
-    var number:NSInteger = 0
+    var number = 0
     
     for element in integers{
-    number += (element as NSNumber).integerValue
+    number += element
     }
-    
-    println("Sum all array items: \(number)")
-    
-    
+    print("Sum all array items: \(number)")
 }
 
+example1(integers: array2)
 
-example1(array2)
-
-
-
-
-func example2() -> NSMutableArray {
+func example2() -> [Int] {
     
-    var array = NSMutableArray()
+    var array = [Int]()
 
-    
-    for var i = 11; i<=20; i++ {
-    array.addObject(i)
-    
+    for i in 11...20 {
+		array.append(i)
     }
     
     return array
-    
 }
-
 
 var array3 = example2()
 //show nsmutable array value sum
-example1(array3)
-
-
-
+example1(integers: array3)
 
 //delete pair items from array
 func example3()  {
     
     var array = example2()
-    
-    
-    
-    for var i = 0; i<array.count; i++ {
-        if ((array.objectAtIndex(i) as Int % 2) == 0){
-        array.removeObjectAtIndex(i)
-        }
-    }
-    
+	
+	array = array.filter({$0 % 2 != 0})
+	
     //print pair items from array
-    example1(array)
-    
+    example1(integers: array)
 }
 
+//inferred types
+func getClassName(obj : Any) -> String {
+    let objectClass : AnyClass! = object_getClass(obj)
+    let className = objectClass.description()
+    
+    return className
+}
 
+let swiftArray = [1, 2, 3]
+let swiftDictionary = ["Name": "John Doe"]
+let cocoaArray : NSArray = [10, 20, 30]
+var mutableCocoaArray = NSMutableArray()
 
+var 🤔 = 5
+var cadena = "hola"
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+print(getClassName(obj: swiftArray))
+print(getClassName(obj: swiftDictionary))
+print(getClassName(obj: cocoaArray))
+print(getClassName(obj: mutableCocoaArray))
+print(getClassName(obj: 🤔))
+print(getClassName(obj: cadena))
+print(🤔.description)

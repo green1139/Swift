@@ -5,14 +5,6 @@
 //  Created by Carlos Butron on 12/04/15.
 //  Copyright (c) 2015 Carlos Butron. All rights reserved.
 //
-//  This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
-//  License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
-//  version.
-//  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-//  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-//  You should have received a copy of the GNU General Public License along with this program. If not, see
-//  http:/www.gnu.org/licenses/.
-//
 
 import UIKit
 
@@ -20,27 +12,27 @@ class NewClass: UIStoryboardSegue {
     
     override func perform(){
         
-        var source : UIViewController = self.sourceViewController as UIViewController
-        var destination : UIViewController = self.destinationViewController as UIViewController
+        let source : UIViewController = self.source 
+        let destination : UIViewController = self.destination 
         
         UIGraphicsBeginImageContext(source.view.bounds.size)
-        source.view.layer.renderInContext(UIGraphicsGetCurrentContext())
+        source.view.layer.render(in: UIGraphicsGetCurrentContext()!)
         
-        let sourceImage : UIImage = UIGraphicsGetImageFromCurrentImageContext()
-        destination.view.layer.renderInContext(UIGraphicsGetCurrentContext())
-        let destinationImage : UIImage = UIGraphicsGetImageFromCurrentImageContext()
+        let sourceImage : UIImage = UIGraphicsGetImageFromCurrentImageContext()!
+        destination.view.layer.render(in: UIGraphicsGetCurrentContext()!)
+        let destinationImage : UIImage = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
         let sourceImageView : UIImageView = UIImageView (image: sourceImage)
         let destinationImageView : UIImageView = UIImageView (image: destinationImage)
         source.view.addSubview(sourceImageView)
         source.view.addSubview(destinationImageView)
-        destinationImageView.transform = CGAffineTransformMakeTranslation(destinationImageView.frame.size.width, 0)
+        destinationImageView.transform = CGAffineTransform(translationX: destinationImageView.frame.size.width, y: 0)
         
-        UIView.animateWithDuration(1.0, animations: { () in
-            sourceImageView.transform = CGAffineTransformMakeTranslation(-sourceImageView.frame.size.width, 0)
-            destinationImageView.transform = CGAffineTransformMakeTranslation(0, 0)
+        UIView.animate(withDuration: 1.0, animations: { () in
+            sourceImageView.transform = CGAffineTransform(translationX: -sourceImageView.frame.size.width, y: 0)
+            destinationImageView.transform = CGAffineTransform(translationX: 0, y: 0)
             }, completion: { (finished) in
-                source.presentViewController(destination, animated: true, completion: nil)
+                source.present(destination, animated: true, completion: nil)
         }) }
     
 }

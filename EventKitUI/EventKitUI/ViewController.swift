@@ -5,14 +5,6 @@
 //  Created by Carlos Butron on 02/12/14.
 //  Copyright (c) 2015 Carlos Butron. All rights reserved.
 //
-//  This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
-//  License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
-//  version.
-//  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-//  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-//  You should have received a copy of the GNU General Public License along with this program. If not, see
-//  http:/www.gnu.org/licenses/.
-//
 
 import UIKit
 import EventKitUI
@@ -21,97 +13,85 @@ class ViewController: UIViewController, EKEventEditViewDelegate {
     
     var store = EKEventStore()
     
-    @IBAction func calendar(sender: UIButton) {
+    @IBAction func calendar(_ sender: UIButton) {
         
-        
-        store.requestAccessToEntityType(EKEntityTypeEvent, completion: { (granted, error) -> Void in
+        store.requestAccess(to: EKEntityType.event, completion: { (granted, error) -> Void in
             if (granted) {
-                println("Access granted")
+                print("Access granted")
                 
-                
-                var controller = EKEventEditViewController()
+                let controller = EKEventEditViewController()
                 controller.eventStore = self.store
                 controller.editViewDelegate = self
-                self.presentViewController(controller, animated: true, completion: nil)
+                self.present(controller, animated: true, completion: nil)
             }else{
-                println("Access denied")
+                print("Access denied")
             }
         })
-        
     }
     
-    
-    @IBAction func deleteEvents(sender: UIButton) {
+    @IBAction func deleteEvents(_ sender: UIButton) {
         //get calendar
-        var calendar = NSCalendar.currentCalendar()
+        let calendar = NSCalendar.current
         //get start and end date
-        let aDayBeforeComponents = NSDateComponents()
+        var aDayBeforeComponents = DateComponents()
         aDayBeforeComponents.day = -1
-        let aDayBefore : NSDate = calendar.dateByAddingComponents(aDayBeforeComponents, toDate: NSDate(), options: NSCalendarOptions(0))!
-        let yearAfterComponents = NSDateComponents()
+        let aDayBefore : Date = (calendar as NSCalendar).date(byAdding: aDayBeforeComponents, to: Date(), options: Calendar(identifier: 0))!
+        var yearAfterComponents = DateComponents()
         yearAfterComponents.year = 1
-        let yearAfter : NSDate = calendar.dateByAddingComponents(yearAfterComponents, toDate: NSDate(), options: NSCalendarOptions(0))!
+        let yearAfter : Date = (calendar as NSCalendar).date(byAdding: yearAfterComponents, to: Date(), options: Calendar(identifier: 0))!
         //create predicate
-        let predicate : NSPredicate = self.store.predicateForEventsWithStartDate(aDayBefore, endDate: yearAfter, calendars: nil)
+        let predicate : NSPredicate = self.store.predicateForEvents(withStart: aDayBefore, end: yearAfter, calendars: nil)
         //get related events
-        let events : NSArray = self.store.eventsMatchingPredicate(predicate)
+        let events : NSArray = self.store.events(matching: predicate)
         
-        
-        
-        
-        ////loop all events in events and delete it
+        //loop all events in events and delete it
         for i in events{
-            self.store.removeEvent(i as EKEvent, span: EKSpanThisEvent, commit: true, error: nil)
+            do {
+                try self.store.remove(i as! EKEvent, span: .thisEvent, commit: true)
+            } catch _ {
+            }
             //println(i)
         }
-        
     }
     
-    
-    @IBAction func setAlarm(sender: UIButton) {
+    @IBAction func setAlarm(_ sender: UIButton) {
         
         //get calendar
-        var calendar = NSCalendar.currentCalendar()
+        let calendar = NSCalendar.current
         //get start and end date
-        let aDayBeforeComponents = NSDateComponents()
+        var aDayBeforeComponents = DateComponents()
         aDayBeforeComponents.day = -1
-        let aDayBefore : NSDate = calendar.dateByAddingComponents(aDayBeforeComponents, toDate: NSDate(), options: NSCalendarOptions(0))!
-        let yearAfterComponents = NSDateComponents()
+        let aDayBefore : Date = (calendar as NSCalendar).date(byAdding: aDayBeforeComponents, to: Date(), options: Calendar(identifier: 0))!
+        var yearAfterComponents = DateComponents()
         yearAfterComponents.year = 1
-        let yearAfter : NSDate = calendar.dateByAddingComponents(yearAfterComponents, toDate: NSDate(), options: NSCalendarOptions(0))!
+        let yearAfter : Date = (calendar as NSCalendar).date(byAdding: yearAfterComponents, to: Date(), options: Calendar(identifier: 0))!
         //create predicate
-        let predicate : NSPredicate = self.store.predicateForEventsWithStartDate(aDayBefore, endDate: yearAfter, calendars: nil)
+        let predicate : NSPredicate = self.store.predicateForEvents(withStart: aDayBefore, end: yearAfter, calendars: nil)
         //get related events
-        let events : NSArray = self.store.eventsMatchingPredicate(predicate)
-        
+        let events : NSArray = self.store.events(matching: predicate)
         
         //loop all events in events and add alarm to all
         for i in events{
-            let eventWithAlarm = i as EKEvent
+            let eventWithAlarm = i as! EKEvent
             let alarm = EKAlarm(relativeOffset: -2.0)
             eventWithAlarm.addAlarm(alarm)
-            self.store.saveEvent(eventWithAlarm, span: EKSpanThisEvent, error: nil)
+            do {
+                try self.store.save(eventWithAlarm, span: .thisEvent)
+            } catch _ {
+            }
         }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
-    
-    //    override func viewDidAppear(animated: Bool) {
-    //
-    //    }
-    
-    func eventEditViewController(controller: EKEventEditViewController!, didCompleteWithAction action: EKEventEditViewAction) {
-        self.dismissViewControllerAnimated(true, completion: nil)
+
+    func eventEditViewController(_ controller: EKEventEditViewController, didCompleteWith action: EKEventEditViewAction) {
+        self.dismiss(animated: true, completion: nil)
     }
-    
     
 }
-

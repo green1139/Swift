@@ -5,19 +5,10 @@
 //  Created by Carlos Butron on 02/12/14.
 //  Copyright (c) 2014 Carlos Butron.
 //
-//  This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
-//  License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
-//  version.
-//  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
-//  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-//  You should have received a copy of the GNU General Public License along with this program. If not, see
-//  http:/www.gnu.org/licenses/.
-//
 
 import UIKit
 
 class ViewController: UIViewController {
-    
     
     @IBOutlet weak var city: UILabel!
     @IBOutlet weak var temperatureCelsius: UITextField!
@@ -29,62 +20,58 @@ class ViewController: UIViewController {
     @IBOutlet weak var humidity: UITextField!
     @IBOutlet weak var wind: UITextField!
     
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
         
-        var sessionConfig: NSURLSessionConfiguration = NSURLSessionConfiguration.defaultSessionConfiguration()
+        let sessionConfig: URLSessionConfiguration = URLSessionConfiguration.default
         sessionConfig.allowsCellularAccess = false
         //only accept JSON answer
-        sessionConfig.HTTPAdditionalHeaders = ["Accept":"application/json"]
+        sessionConfig.httpAdditionalHeaders = ["Accept":"application/json"]
         //timeouts and connections allowed
         sessionConfig.timeoutIntervalForRequest = 30.0
         sessionConfig.timeoutIntervalForResource = 60.0
-        sessionConfig.HTTPMaximumConnectionsPerHost = 1
+        sessionConfig.httpMaximumConnectionsPerHost = 1
         //create session, assign configuration
-        var session = NSURLSession(configuration: sessionConfig)
-        session.dataTaskWithURL(NSURL(string: "http://api.openweathermap.org/data/2.5/weather?q=Madrid,es")!, completionHandler: {(data, response, error) in
-            var dic:NSDictionary = NSJSONSerialization.JSONObjectWithData(data, options:NSJSONReadingOptions(0), error: nil) as NSDictionary
+        let session = URLSession(configuration: sessionConfig)
+      
+      
+      
+        session.dataTask(with: URL(string: "http://api.openweathermap.org/data/2.5/weather?q=Barcelona,es&appid=ac02dc102cc17b974cd84206048d97d8")!, completionHandler: {(data, response, error) in
+            let dic:NSDictionary = ((try? JSONSerialization.jsonObject(with: data!, options:JSONSerialization.ReadingOptions(rawValue: 0))) as? NSDictionary)! as NSDictionary
             
-            println(dic)
+            if dic.count == 0 {
+                return
+            }
             
-            var city: NSString = (dic["name"] as NSString)
-            var kelvin: AnyObject! = (dic["main"] as NSDictionary) ["temp"]
-            var kelvin_min: AnyObject! = (dic["main"] as NSDictionary) ["temp_min"]
-            var kelvin_max: AnyObject! = (dic["main"] as NSDictionary) ["temp_max"]
-            var celsius = kelvin as Float - 274.15 as Float
-            var celsius_min = kelvin_min as Float - 274.15 as Float
-            var celsius_max = kelvin_max as Float - 274.15 as Float
-            var humidity: AnyObject! = (dic ["main"] as NSDictionary) ["humidity"]
-            var wind: AnyObject! = (dic ["wind"] as NSDictionary) ["speed"]
+            print(dic)
             
-            
+            let city: String = (dic["name"] as! String)
+            let kelvin: Double! = ((dic["main"] as! NSDictionary) ["temp"]) as! Double
+            let kelvin_min: Double! = (dic["main"] as! NSDictionary) ["temp_min"] as! Double
+            let kelvin_max: Double! = (dic["main"] as! NSDictionary) ["temp_max"] as! Double
+            let celsius = kelvin as Double - 274.15 as Double
+            let celsius_min = kelvin_min as Double - 274.15 as Double
+            let celsius_max = kelvin_max as Double - 274.15 as Double
+            let humidity: AnyObject = (dic ["main"] as! NSDictionary) ["humidity"] as AnyObject
+            let wind: Double! = (dic ["wind"] as! NSDictionary) ["speed"] as! Double
+          
             //original thread
-            dispatch_async(dispatch_get_main_queue(), { () in
+            DispatchQueue.main.async(execute: { () in
                 self.city.text = "\(city)"
                 self.temperatureCelsius.text = "\(celsius)"
                 self.temperatureCelsiusMax.text = "\(celsius_max)"
                 self.temperatureCelsiusMin.text = "\(celsius_min)"
-                self.temperatureKelvin.text = "\(kelvin)"
-                self.temperatureKelvinMax.text = "\(kelvin_max)"
-                self.temperatureKelvinMin.text = "\(kelvin_min)"
+                self.temperatureKelvin.text = "\(kelvin!)"
+                self.temperatureKelvinMax.text = "\(kelvin_max!)"
+                self.temperatureKelvinMin.text = "\(kelvin_min!)"
                 self.humidity.text = "\(humidity)"
-                self.wind.text = "\(wind)"
+                self.wind.text = "\(wind!)"
             })
-            
         }).resume()
-        
-        
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
-    
 }
-
-
